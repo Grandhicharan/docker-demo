@@ -15,7 +15,7 @@ pipeline {
             steps {  
                 script {
                     docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                        sh "docker build -t dockerhubcharan/docker_practice:$BUILD_NUMBER ."
+                        sh "docker build -t dockerhubcharan/integration:$BUILD_NUMBER ."
                     }
                 }
             }
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                        sh "docker push dockerhubcharan/docker_practice:$BUILD_NUMBER"
+                        sh "docker push dockerhubcharan/integration:$BUILD_NUMBER"
                     }
                 }
             }
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                        sh "docker pull dockerhubcharan/docker_practice:$BUILD_NUMBER"
+                        sh "docker pull dockerhubcharan/integration:$BUILD_NUMBER"
                     }
                 }
             }
@@ -43,7 +43,7 @@ pipeline {
         
         stage('Run image') {
             steps {
-                sh "docker run -d -p 443:80 dockerhubcharan/docker_practice:$BUILD_NUMBER"
+                sh "docker run -d -p 443:80 dockerhubcharan/integration:$BUILD_NUMBER"
             }
         }
     }
