@@ -15,7 +15,7 @@ pipeline {
             steps {  
                 script {
                     docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                        sh "docker build -t dockerhubcharan/integration/docker_practice:$BUILD_NUMBER ."
+                        sh "docker build -t dockerhubcharan/docker_practice:$BUILD_NUMBER ."
                     }
                 }
             }
