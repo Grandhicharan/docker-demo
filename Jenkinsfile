@@ -1,60 +1,49 @@
-
 pipeline {
-    agent any 
+    agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-dockerhubcharan')
     }
-    stages { 
+    stages {
         stage('SCM Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/Grandhicharan/docker-demo.git'
+                git 'https://github.com/BhaskarRao-D/DockerPipeline.git'
             }
         }
-        
+
         stage('Build docker image') {
-            steps {  
-                script {
-                    docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                        sh "docker build -t dockerhubcharan/integration:$BUILD_NUMBER ."
-                    }
-                }
+            steps {
+                sh 'docker build -t dockerhubcharan/nginx1:8 .'
             }
         }
-        
+
+        stage('Login to DockerHub') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+
         stage('Push image') {
             steps {
-                script {
-                    docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                        sh "docker push dockerhubcharan/integration:$BUILD_NUMBER"
-                    }
-                }
+                sh 'docker push dockerhubcharan/nginx1:8'
             }
         }
-        
+
         stage('Pull image') {
             steps {
-                script {
-                    docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                        sh "docker pull dockerhubcharan/integration:$BUILD_NUMBER"
-                    }
-                }
+                sh 'docker pull dockerhubcharan/nginx1:8'
             }
         }
-        
+
         stage('Run image') {
             steps {
-                sh "docker run -d -p 443:80 dockerhubcharan/integration:$BUILD_NUMBER"
+                sh 'docker run -d -p 88:80 dockerhubcharan/nginx1:8'
             }
         }
     }
-    
+
     post {
         always {
-            script {
-                docker.withRegistry('', DOCKERHUB_CREDENTIALS) {
-                    sh 'docker logout'
-                }
-            }
+            sh 'docker logout'
         }
     }
 }
